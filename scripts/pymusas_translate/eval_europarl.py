@@ -18,6 +18,7 @@ import pandas as pd
 from datasets import load_dataset
 from collections import defaultdict
 from typing import List, Dict, Tuple
+from pathlib import Path
 from tqdm import tqdm
 
 from pymusas.rankers.lexicon_entry import ContextualRuleBasedRanker
@@ -63,14 +64,20 @@ def setup_danish_tagger():
     """Setup Danish PyMUSAS tagger with custom lexicons."""
     nlp = spacy.load("da_core_news_sm", disable=['ner'])
     
+    # Locate resources relative to this script
+    # Script is in scripts/pymusas_translate/
+    # Resources are in resources/pymusas/da/
+    script_dir = Path(__file__).resolve().parent
+    lexicon_dir = script_dir.parents[1] / 'resources' / 'pymusas' / 'da'
+    
     # Single word lexicon
-    single_lexicon_url = './pymusas/semantic_lexicon_da_clean.tsv'
+    single_lexicon_url = str(lexicon_dir / 'semantic_lexicon_da_clean.tsv')
     single_lexicon = LexiconCollection.from_tsv(single_lexicon_url)
     single_lemma_lexicon = LexiconCollection.from_tsv(single_lexicon_url, include_pos=False)
     single_rule = SingleWordRule(single_lexicon, single_lemma_lexicon)
     
     # MWE lexicon
-    mwe_lexicon_url = './pymusas/mwe_da_clean.tsv'
+    mwe_lexicon_url = str(lexicon_dir / 'mwe_da_clean.tsv')
     mwe_lexicon = MWELexiconCollection.from_tsv(mwe_lexicon_url)
     mwe_rule = MWERule(mwe_lexicon)
     
@@ -84,10 +91,14 @@ def setup_danish_tagger():
     return nlp
 
 
+
+import en_dual_none_contextual
+
 def setup_english_tagger():
     """Setup English PyMUSAS tagger with official lexicons."""
     nlp = spacy.load('en_core_web_sm', exclude=['parser', 'ner'])
-    english_tagger_pipeline = spacy.load('en_dual_none_contextual')
+    # Load directly to avoid TypeError with newer spacy versions passing 'enable' arg
+    english_tagger_pipeline = en_dual_none_contextual.load()
     nlp.add_pipe('pymusas_rule_based_tagger', source=english_tagger_pipeline)
     
     return nlp
@@ -441,6 +452,11 @@ def main():
     # Print report
     print_evaluation_report(metrics, args.top_k)
     
+    # Define output directory
+    script_dir = Path(__file__).resolve().parent
+    output_dir = script_dir.parents[1] / 'resources' / 'output' / 'pymusas_eval'
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
     # Save detailed results
     results_data = {
         'total_sentences': [metrics['total_sentences']],
@@ -454,7 +470,7 @@ def main():
         'common_unique_tags': [metrics['common_unique_tags']]
     }
     results_df = pd.DataFrame(results_data)
-    output_file = f'europarl_evaluation_top{args.top_k}_n{args.num_samples}.csv'
+    output_file = output_dir / f'europarl_evaluation_top{args.top_k}_n{args.num_samples}.csv'
     results_df.to_csv(output_file, index=False)
     print(f"\n💾 Summary results saved to '{output_file}'")
     
@@ -463,7 +479,7 @@ def main():
         'sentence_id': range(len(metrics['similarities'])),
         'jaccard_similarity': metrics['similarities']
     })
-    similarities_file = f'europarl_similarities_top{args.top_k}_n{args.num_samples}.csv'
+    similarities_file = output_dir / f'europarl_similarities_top{args.top_k}_n{args.num_samples}.csv'
     similarities_df.to_csv(similarities_file, index=False)
     print(f"💾 Per-sentence similarities saved to '{similarities_file}'")
 

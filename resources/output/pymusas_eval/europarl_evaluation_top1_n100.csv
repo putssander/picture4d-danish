@@ -1,0 +1,2 @@
+total_sentences,mean_jaccard_similarity,median_jaccard_similarity,tag_precision,tag_recall,tag_f1,danish_unique_tags,english_unique_tags,common_unique_tags
+100,0.23065577516525274,0.21568627450980393,0.808695652173913,0.4781491002570694,0.6009693053311793,230,389,186
