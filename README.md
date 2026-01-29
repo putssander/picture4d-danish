@@ -5,6 +5,10 @@ This repository represents the output of the Danish team for the [4DPICTURE](htt
 ## Scripts
 
 - **[PyMUSAS Translation Utilities](scripts/pymusas_translate/README.md)**: Scripts for evaluating tagging performance (`eval_europarl.py`) and performing dictionary lookups (`wiktionary_lookup.py`, etc.).
+- **Health Corpus Creator**: `scripts/create_health_corpus.py` extracts aligned health-related sentences from Europarl.
+  ```bash
+  python scripts/create_health_corpus.py --min-samples 100 --candidate-pool 10000
+  ```
 
 ## Setup
 
