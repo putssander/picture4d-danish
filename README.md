@@ -2,6 +2,39 @@
 
 This repository represents the output of the Danish team for the [4DPICTURE](https://4dpicture.eu) project. The primary objective is to create a Danish version of [The Metaphor Menu](https://wp.lancs.ac.uk/melc/the-metaphor-menu/). To facilitate the extraction of metaphors for this purpose, we utilize PyMUSAS. As part of this effort, we have developed and evaluated a Danish version of the PyMUSAS tool.
 
+In addition, we performed speech-to-text transcription on interview data from cancer patients, which is used to identify and analyze metaphor usage.
+
+
+
+
+## Speech-to-Text (STT) Transcription of Interviews
+
+To support metaphor analysis, we converted recorded interviews with cancer patients into written text using speech-to-text (STT) technology. This makes it possible to systematically search for and analyze metaphor usage in spoken language.
+
+For transparency and reproducibility, the full workflow is available as notebooks:
+
+- Convert audio files to the correct format (WAV):  
+  `notebooks/stt/convert_m4a_to_wav.ipynb`
+
+- Perform fast and efficient transcription using Whisper:  
+  `notebooks/stt/transcribe-insanely-fast-whisper.ipynb`
+
+We use a maintained fork of the Whisper-based transcription tool to ensure compatibility and stability:
+
+- [insanely-fast-whisper (maintained fork)](https://github.com/putssander/insanely-fast-whisper)
+
+This fork was created because the original project had unresolved dependency issues, and the updates ensure the transcription pipeline continues to work reliably.
+
+
+## PyMUSAS translation
+
+Efforts
+1. Use google translate for single term translations
+2. GPT4o for multi word expressions
+3. Opensource definitions
+4. GPT internet access
+
+
 ## Scripts
 
 - **[PyMUSAS Translation Utilities](scripts/pymusas_translate/README.md)**: Scripts for evaluating tagging performance (`eval_europarl.py`) and performing dictionary lookups (`wiktionary_lookup.py`, etc.).
